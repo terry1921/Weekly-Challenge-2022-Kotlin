@@ -1,5 +1,8 @@
 package com.mouredev.weeklychallenge2022
 
+import kotlin.math.max
+import kotlin.math.min
+
 /*
  * Reto #23
  * MÁXIMO COMÚN DIVISOR Y MÍNIMO COMÚN MÚLTIPLO
@@ -17,3 +20,27 @@ package com.mouredev.weeklychallenge2022
  * - Subiré una posible solución al ejercicio el lunes siguiente al de su publicación.
  *
  */
+
+
+fun main () {
+    println("mcm: ${mcm(10,15)}")
+}
+
+fun mcm(num1: Int, num2: Int): Int {
+    val a = max(num1, num2)
+    val b = min(num1, num2)
+    return a / mcd(num1, num2) * b
+}
+
+fun mcd(num1: Int, num2: Int): Int {
+    var a = max(num1, num2)
+    var b = min(num1, num2)
+    var resultado = 0
+    do {
+        resultado = b
+        b = a % b
+        a = resultado
+    } while (b != 0)
+    println("mcd: $resultado")
+    return resultado
+}
