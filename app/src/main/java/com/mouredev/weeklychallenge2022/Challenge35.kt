@@ -24,48 +24,49 @@ package com.mouredev.weeklychallenge2022
  *   https://retosdeprogramacion.com/semanales2022.
  *
  */
-
 fun main() {
-    println(battle(PokemonType.WATER, PokemonType.FIRE, 50, 30))
-    println(battle(PokemonType.WATER, PokemonType.FIRE, 101, -10))
-    println(battle(PokemonType.FIRE, PokemonType.WATER, 50, 30))
-    println(battle(PokemonType.FIRE, PokemonType.FIRE, 50, 30))
-    println(battle(PokemonType.GRASS, PokemonType.ELECTRIC, 30, 50))
+    println("pikachu ataca a square y este recibe ${getDamage(PokemonType.ELECTRIC, PokemonType.WATER, 60, 80)} de daño")
 }
 
-enum class PokemonType(name: String) {
-    WATER("Agua"),
-    FIRE("Fuego"),
-    GRASS("Planta"),
-    ELECTRIC("Eléctrico")
+enum class PokemonType {
+    WATER, FIRE, PLANT, ELECTRIC
 }
 
-private data class PokemonChart(val effective: PokemonType, val notEffective: PokemonType)
-
-private fun battle(attacker: PokemonType, defender: PokemonType, attack: Int, defense: Int): Double? {
-
-    if (attack <= 0 || attack > 100 || defense <= 0 || defense > 100) {
-        println("El ataque o la defensa contiene un valor incorrecto")
-        return null
+fun getDamage(target: PokemonType, opponent: PokemonType, attack: Int, defence: Int): Double {
+    if (!IntRange(1, 100).contains(attack)) {
+        return 0.0
     }
-
-    val typeChart = mapOf(
-        PokemonType.WATER to PokemonChart(PokemonType.FIRE, PokemonType.GRASS),
-        PokemonType.FIRE to PokemonChart(PokemonType.GRASS, PokemonType.WATER),
-        PokemonType.GRASS to PokemonChart(PokemonType.WATER, PokemonType.FIRE),
-        PokemonType.ELECTRIC to PokemonChart(PokemonType.WATER, PokemonType.GRASS)
-    )
-
-    var effectivity = 1.0
-    if (attacker == defender || typeChart[attacker]!!.notEffective  == defender) {
-        effectivity = 0.5
-        println("No es muy efectivo")
-    } else if (typeChart[attacker]!!.effective  == defender) {
-        effectivity = 2.0
-        println("Es súper efectivo")
-    } else {
-        println("Es neutro")
+    if (!IntRange(1, 100).contains(defence)) {
+        return 0.0
     }
+    return 50 * (attack.toDouble() / defence.toDouble()) * getEffectivity(target, opponent)
+}
 
-    return 50 * attack.toDouble() / defense.toDouble() * effectivity
+fun getEffectivity(target: PokemonType, opponent: PokemonType): Double {
+    return when(target) {
+        PokemonType.ELECTRIC -> when(opponent) {
+            PokemonType.ELECTRIC -> 0.5
+            PokemonType.FIRE -> 1.0
+            PokemonType.PLANT -> 0.5
+            PokemonType.WATER -> 2.0
+        }
+        PokemonType.FIRE -> when(opponent) {
+            PokemonType.ELECTRIC -> 1.0
+            PokemonType.FIRE -> 0.5
+            PokemonType.PLANT -> 2.0
+            PokemonType.WATER -> 0.5
+        }
+        PokemonType.PLANT -> when(opponent) {
+            PokemonType.ELECTRIC -> 1.0
+            PokemonType.FIRE -> 0.5
+            PokemonType.PLANT -> 0.5
+            PokemonType.WATER -> 2.0
+        }
+        PokemonType.WATER -> when(opponent) {
+            PokemonType.ELECTRIC -> 1.0
+            PokemonType.FIRE -> 2.0
+            PokemonType.PLANT -> 0.5
+            PokemonType.WATER -> 0.5
+        }
+    }
 }
